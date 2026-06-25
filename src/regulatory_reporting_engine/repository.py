@@ -58,6 +58,10 @@ class ReportingRepository:
             except KeyError as exc:
                 raise NotFoundError(f"Schedule {schedule_id!r} was not found.") from exc
 
+    def list_schedules(self) -> list[ReportSchedule]:
+        with self._lock:
+            return list(self._schedules.values())
+
     def save_execution(self, execution: ExecutionRecord) -> ExecutionRecord:
         with self._lock:
             self._executions[execution.id] = execution
