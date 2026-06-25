@@ -7,6 +7,7 @@ from regulatory_reporting_engine.domain import (
     Report,
     ReportStatus,
     SourceRecord,
+    ValidationError,
     ValidationIssue,
     utcnow,
 )
@@ -66,7 +67,7 @@ class ReportService:
     def approve(self, report_id: str, user: str) -> Report:
         report = self.repository.get_report(report_id)
         if report.status is not ReportStatus.VALIDATED:
-            raise ValueError("Only validated reports can be approved.")
+            raise ValidationError("Only validated reports can be approved.")
         report.status = ReportStatus.APPROVED
         report.approved_by = user
         report.updated_at = utcnow()
@@ -76,7 +77,7 @@ class ReportService:
     def submit(self, report_id: str, user: str) -> Report:
         report = self.repository.get_report(report_id)
         if report.status is not ReportStatus.APPROVED:
-            raise ValueError("Only approved reports can be submitted.")
+            raise ValidationError("Only approved reports can be submitted.")
         report.status = ReportStatus.SUBMITTED
         report.submitted_at = utcnow()
         report.updated_at = report.submitted_at
