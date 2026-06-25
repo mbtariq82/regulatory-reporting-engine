@@ -4,6 +4,7 @@ from datetime import date
 
 from regulatory_reporting_engine.domain import (
     ExecutionRecord,
+    ReportingError,
     ReportSchedule,
     ScheduleFrequency,
 )
@@ -63,7 +64,7 @@ class SchedulingService:
                         attempts=attempts,
                     )
                 )
-            except Exception as exc:
+            except ReportingError as exc:
                 last_error = str(exc)
         return self.repository.save_execution(
             ExecutionRecord(
